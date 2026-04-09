@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.local
+.DS_Store
+__MACOSX/
+*.log
+dist/
+build/
+backend/audio_files/
+frontend/node_modules/
+backend/venv/
+.vscode/
+.idea/
