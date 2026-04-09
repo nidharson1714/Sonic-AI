@@ -22,11 +22,14 @@ git commit -m "initial commit: Sonic-AI project structure"
 
 REM Push
 echo Pushing to GitHub (main branch)...
+echo NOTE: If the push fails, it might be due to a login window. Please complete the login.
 git branch -M main
-git push -u origin main
+REM Using --force because we added a README via the browser which needs to be synced
+git push -u origin main --force
 
 echo.
 echo ========================================
-echo   DONE! If it failed, you might need to login.
+echo   DONE! If it still fails, please copy 
+echo   the error message and tell me.
 echo ========================================
 pause
