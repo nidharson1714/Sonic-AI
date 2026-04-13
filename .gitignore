@@ -11,3 +11,7 @@ frontend/node_modules/
 backend/venv/
 .vscode/
 .idea/
+__pycache__/
+*.pyc
+*.pyo
+*.db

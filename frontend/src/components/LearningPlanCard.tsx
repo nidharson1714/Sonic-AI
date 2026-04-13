@@ -1,76 +1,83 @@
 // @ts-nocheck
-import React from 'react';
-import { BookOpen, Music } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { BookOpen, Music, Zap, Clock, Piano, Lightbulb } from 'lucide-react';
+import { apiClient } from '../api/client';
 
-interface LearningPlanProps {
+interface LearningPlan {
+  genre: string;
+  scale: string;
+  chords: string;
+  tempo: string;
+  key: string;
+  instruments: string;
+  sound_design: string;
+  tip: string;
+  theory_note: string;
+}
+
+interface Props {
   genre: string;
 }
 
-export const LearningPlanCard: React.FC<LearningPlanProps> = ({ genre }) => {
-  // Mock logic based on the user's genre selection
-  const getTheory = () => {
-    switch(genre) {
-      case 'Lo-Fi':
-        return {
-          chords: 'Major 7ths and Minor 9ths (e.g., Cmaj7 - Am9)',
-          tempo: '70-90 BPM',
-          instruments: 'Detuned piano, vinyl crackle, saturated bass',
-          tip: 'Use slight swing/groove on the hi-hats to humanize the beat.'
-        };
-      case 'Cinematic':
-        return {
-          chords: 'Minor chords with added 6ths or 9ths, suspended chords',
-          tempo: '60-80 BPM (often free rhythm)',
-          instruments: 'Heavy strings, brass stabs, deep sub bass',
-          tip: 'Build tension by holding root notes while shifting chords above them.'
-        };
-      default:
-        return {
-          chords: 'Four-on-the-floor, Minor and Major triads',
-          tempo: '120-128 BPM',
-          instruments: 'Synthesizers, tight electronic drums, saw waves',
-          tip: 'Focus on the buildup and release (the drop) to create energy.'
-        };
-    }
-  };
+export const LearningPlanCard: React.FC<Props> = ({ genre }) => {
+  const [plan, setPlan] = useState<LearningPlan | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const theory = getTheory();
+  useEffect(() => {
+    setLoading(true);
+    apiClient.get(`/generate/learning-plan?genre=${encodeURIComponent(genre)}`)
+      .then(({ data }) => setPlan(data))
+      .catch(() => setPlan(null))
+      .finally(() => setLoading(false));
+  }, [genre]);
+
+  if (loading) return (
+    <div className="glass-panel" style={{ marginTop: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>
+      Loading music theory plan...
+    </div>
+  );
+
+  if (!plan) return null;
+
+  const items = [
+    { icon: Music, label: 'Scale / Mode', value: plan.scale },
+    { icon: Music, label: 'Chords & Harmony', value: plan.chords },
+    { icon: Clock, label: 'Tempo', value: plan.tempo },
+    { icon: Zap, label: 'Key', value: plan.key },
+    { icon: Piano, label: 'Instruments', value: plan.instruments },
+    { icon: Zap, label: 'Sound Design', value: plan.sound_design },
+  ];
 
   return (
     <div className="glass-panel" style={{ marginTop: '2rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.5rem' }}>
         <BookOpen size={24} color="var(--primary)" />
-        <h3 style={{ margin: 0, fontSize: '1.4rem' }}>{genre} Music Theory Plan</h3>
+        <h3 style={{ margin: 0, fontSize: '1.3rem' }}>{plan.genre} — Music Theory Plan</h3>
       </div>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '10px' }}>
-          <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', marginTop: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Music size={14} /> Chords & Harmony
-          </h4>
-          <p style={{ margin: 0 }}>{theory.chords}</p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+        {items.map(({ icon: Icon, label, value }) => (
+          <div key={label} style={{ background: 'rgba(255,255,255,0.02)', padding: '14px', borderRadius: '10px' }}>
+            <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <Icon size={12} /> {label}
+            </div>
+            <p style={{ margin: 0, fontSize: '0.95rem' }}>{value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ background: 'rgba(0,245,212,0.05)', border: '1px solid rgba(0,245,212,0.2)', padding: '14px', borderRadius: '10px', marginBottom: '10px' }}>
+        <div style={{ color: 'var(--secondary)', fontSize: '0.8rem', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <Lightbulb size={12} /> Pro Tip
         </div>
-        
-        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '10px' }}>
-          <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', marginTop: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Music size={14} /> Traditional Tempo
-          </h4>
-          <p style={{ margin: 0 }}>{theory.tempo}</p>
+        <p style={{ margin: 0, fontSize: '0.95rem' }}>{plan.tip}</p>
+      </div>
+
+      <div style={{ background: 'rgba(157,78,221,0.05)', border: '1px solid rgba(157,78,221,0.2)', padding: '14px', borderRadius: '10px' }}>
+        <div style={{ color: 'var(--primary)', fontSize: '0.8rem', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+          <BookOpen size={12} /> Theory Note
         </div>
-        
-        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '10px' }}>
-          <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', marginTop: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Music size={14} /> Key Instruments
-          </h4>
-          <p style={{ margin: 0 }}>{theory.instruments}</p>
-        </div>
-        
-        <div style={{ background: 'rgba(255,255,255,0.02)', padding: '15px', borderRadius: '10px', borderLeft: '3px solid var(--secondary)' }}>
-          <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', marginTop: 0, display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Music size={14} /> Pro Tip
-          </h4>
-          <p style={{ margin: 0 }}>{theory.tip}</p>
-        </div>
+        <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--text-muted)' }}>{plan.theory_note}</p>
       </div>
     </div>
   );
