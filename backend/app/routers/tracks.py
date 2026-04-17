@@ -30,7 +30,7 @@ async def _get_user_by_token(token: str, db: AsyncSession) -> User:
         raise HTTPException(status_code=401, detail="User not found")
     return user
 
-router = APIRouter(prefix="/tracks", tags=["tracks"])
+
 
 @router.get("/", response_model=list[TrackResponse])
 async def get_tracks(current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
@@ -40,11 +40,9 @@ async def get_tracks(current_user: User = Depends(get_current_user), db: AsyncSe
     return tracks
 
 @router.get("/{track_id}/stream")
-async def stream_track(track_id: int, token: str = Query(None), current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    # Support both Bearer header auth and ?token= query param (for WaveSurfer direct URL)
-    user = current_user
-    if token:
-        user = await _get_user_by_token(token, db)
+async def stream_track(track_id: int, token: str = Query(...), db: AsyncSession = Depends(get_db)):
+    """Auth via ?token= query param (WaveSurfer loads audio via direct URL, can't send headers)."""
+    user = await _get_user_by_token(token, db)
     stmt = select(Track).where(Track.id == track_id, Track.user_id == user.id)
     result = await db.execute(stmt)
     track = result.scalars().first()
@@ -55,10 +53,9 @@ async def stream_track(track_id: int, token: str = Query(None), current_user: Us
     return FileResponse(track.file_path, media_type="audio/wav")
 
 @router.get("/{track_id}/download")
-async def download_track(track_id: int, token: str = Query(None), current_user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
-    user = current_user
-    if token:
-        user = await _get_user_by_token(token, db)
+async def download_track(track_id: int, token: str = Query(...), db: AsyncSession = Depends(get_db)):
+    """Auth via ?token= query param for direct download links."""
+    user = await _get_user_by_token(token, db)
     stmt = select(Track).where(Track.id == track_id, Track.user_id == user.id)
     result = await db.execute(stmt)
     track = result.scalars().first()

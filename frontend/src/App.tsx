@@ -8,12 +8,17 @@ import { Layout } from './components/Layout';
 import { useAuthStore } from './store';
 import './index.css';
 
+const routerFuture = {
+  v7_startTransition: true,
+  v7_relativeSplatPath: true,
+};
+
 function App() {
   const { token } = useAuthStore();
 
   if (!token) {
     return (
-      <BrowserRouter>
+      <BrowserRouter future={routerFuture}>
         <Routes>
           <Route path="*" element={<AuthPage />} />
         </Routes>
@@ -22,7 +27,7 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter future={routerFuture}>
       <Layout>
         <Routes>
           <Route path="/" element={<DashboardPage />} />

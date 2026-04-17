@@ -19,6 +19,7 @@ pip-wheel-metadata/
 *.db
 *.sqlite3
 backend/audio_files/
+music_dataset/
 *.wav
 *.mp3
 

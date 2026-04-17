@@ -5,7 +5,7 @@ import { apiClient } from '../api/client';
 import { WaveformPlayer } from '../components/WaveformPlayer';
 import { Library } from 'lucide-react';
 
-const API = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+
 
 const GENRE_COLORS: Record<string, string> = {
   'Lo-Fi': '#9d4edd',
@@ -50,7 +50,7 @@ export const LibraryPage = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '2rem' }}>
           {tracks.map(track => {
             const color = GENRE_COLORS[track.genre] || 'var(--primary)';
-            const streamUrl = `${API}/tracks/${track.id}/stream`;
+            const streamUrl = `/tracks/${track.id}/stream`;
             return (
               <div key={track.id} className="glass-panel" style={{ borderLeft: `3px solid ${color}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>

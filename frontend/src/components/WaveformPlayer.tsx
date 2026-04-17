@@ -56,9 +56,8 @@ export const WaveformPlayer: React.FC<WaveformProps> = ({ url, trackId }) => {
 
   const handleDownload = () => {
     if (!trackId) return;
-    const API = import.meta.env.VITE_API_URL || 'http://localhost:8000';
     const a = document.createElement('a');
-    a.href = `${API}/tracks/${trackId}/download${token ? `?token=${token}` : ''}`;
+    a.href = `/tracks/${trackId}/download${token ? `?token=${token}` : ''}`;
     a.download = `sonicai-track-${trackId}.wav`;
     a.click();
   };

@@ -5,7 +5,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
     SECRET_KEY: str = "super-secret-key"
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 10080  # 7 days
     AUDIO_OUTPUT_DIR: str = "./audio_files"
     USE_GPU: bool = False
     MUSICGEN_MODEL: str = "facebook/musicgen-small"

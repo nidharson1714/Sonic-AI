@@ -37,9 +37,9 @@ async def run_generation(job_id: str, prompt: str, genre: str, user_id: int):
     output_path = os.path.join(output_dir, f"{job_id}.wav")
 
     try:
-        generate_track_dsp(prompt, genre, output_path)
+        generate_track_dsp(prompt, genre, output_path, duration=20)
         async with SessionLocal() as db:
-            track = Track(user_id=user_id, prompt_used=prompt, file_path=output_path, duration_sec=15, genre=genre)
+            track = Track(user_id=user_id, prompt_used=prompt, file_path=output_path, duration_sec=20, genre=genre)
             db.add(track)
             await db.commit()
             await db.refresh(track)

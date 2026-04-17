@@ -35,7 +35,7 @@ export const GeneratePage = () => {
   };
 
   const streamUrl = activeJob?.track_id
-    ? `${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/tracks/${activeJob.track_id}/stream`
+    ? `/tracks/${activeJob.track_id}/stream`
     : null;
 
   return (
